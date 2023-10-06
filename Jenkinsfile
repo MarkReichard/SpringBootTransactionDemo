@@ -2,10 +2,7 @@ pipeline {
     agent any
 
     environment {
-        CREDS = credentials('mySqlCreds')
         DATABASE_URL='jdbc:mysql://localhost:3306/transaction_demo?allowPublicKeyRetrieval=True&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC;'
-        DATABASE_USERNAME=$CREDS_USR
-        DATABASE_PASSWORD=$CREDS_PSW
         RANDOM_API_SETTING='test'
     }
 
@@ -24,23 +21,30 @@ pipeline {
 
         stage('Compile and Test') {
             steps {
-                // Compiling and testing the project
+                script {
+                    // Load credentials into environment variables
+                    withCredentials([usernamePassword(credentialsId: 'mySqlCreds', usernameVariable: 'CREDS_USR', passwordVariable: 'CREDS_PSW')]) {
+                        // Exporting the environment variables so they can be accessible by Maven
+                        env.DATABASE_USERNAME = "${CREDS_USR}"
+                        env.DATABASE_PASSWORD = "${CREDS_PSW}"
+                    }
+                }
+
+                // Now you can run Maven as usual, and it will see DATABASE_USERNAME and DATABASE_PASSWORD
                 sh 'mvn clean test'
-                //check environment variable
+
                 echo "RANDOM_API_SETTING: ${env.RANDOM_API_SETTING}"
                 echo "DATABASE_URL: ${env.DATABASE_URL}"
                 echo "DATABASE_USERNAME: ${env.DATABASE_USERNAME}"
-                echo "DATABASE_PASSWORD: ${env.DATABASE_PASSWORD}"
-
+                // Avoid echoing passwords in logs
+                // echo "DATABASE_PASSWORD: ${env.DATABASE_PASSWORD}"
             }
         }
 
         stage('Build and Package') {
             steps {
-                // Building and packaging the project (e.g., into a .jar or .war)
                 sh 'mvn package'
             }
         }
-
     }
 }
