@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         // Environment variables can be set here
-        DATABASE_URL='placeholder'
-        DATABASE_USERNAME='placeholder'
-        DATABASE_PASSWORD='placeholder'
+        DATABASE_URL='jdbc:mysql://localhost:3306/transaction_demo?allowPublicKeyRetrieval=True&useUnicode=true&characterEncoding=utf-8, &useSSL=false&serverTimezone=UTC;'
+        DATABASE_USERNAME='root'
+        DATABASE_PASSWORD='example'
     }
 
     tools {
