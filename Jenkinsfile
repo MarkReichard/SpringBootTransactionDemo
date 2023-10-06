@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        mySqlCreds = credentials('mySqlCreds')
+        CREDS = credentials('mySqlCreds')
         DATABASE_URL='jdbc:mysql://localhost:3306/transaction_demo?allowPublicKeyRetrieval=True&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC;'
-        DATABASE_USERNAME=$mySqlCreds_USR //'root'
-        DATABASE_PASSWORD=$mySqlCreds_PSW//'example'
+        DATABASE_USERNAME=$CREDS_USR
+        DATABASE_PASSWORD=$CREDS_PSW
         RANDOM_API_SETTING='test'
     }
 
